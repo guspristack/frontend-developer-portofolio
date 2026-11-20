@@ -1,0 +1,110 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../server/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Profile {
+  id           Int    @id
+  name         String
+  title        String
+  location     String
+  heroGreeting String
+  heroHeadline String
+  introduction String
+  bio          String
+  focus        String
+  skills       String
+  contactNote  String
+  email        String
+  instagram    String
+  linkedin     String
+  github       String
+}
+
+model Experience {
+  id          Int    @id @default(autoincrement())
+  period      String
+  title       String
+  description String
+  position    Int    @default(0)
+}
+
+enum ProjectStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum ProjectIcon {
+  leaf
+  calendar
+  panels
+  code
+}
+
+model Project {
+  id       Int           @id @default(autoincrement())
+  slug     String        @unique
+  name     String
+  type     String
+  icon     ProjectIcon
+  summary  String
+  story    String
+  role     String
+  result   String
+  tools    String
+  position Int           @default(0)
+  status   ProjectStatus @default(DRAFT)
+
+  @@index([status, position])
+}
+
+enum PlantCategory {
+  bright
+  low
+}
+
+enum PlantImage {
+  monstera
+  snake
+  pothos
+}
+
+model Plant {
+  id       Int           @id @default(autoincrement())
+  name     String
+  category PlantCategory
+  image    PlantImage
+  light    String
+  water    String
+  position Int           @default(0)
+}
+
+model Message {
+  id        Int       @id @default(autoincrement())
+  name      String
+  email     String
+  body      String
+  createdAt DateTime  @default(now())
+  readAt    DateTime?
+
+  @@index([createdAt])
+}
+
+model Admin {
+  id           Int    @id
+  email        String @unique
+  passwordHash String
+}
+
+model Session {
+  sid    String   @id @db.VarChar
+  sess   Json     @db.Json
+  expire DateTime @db.Timestamp(6)
+
+  @@index([expire])
+  @@map("session")
+}
